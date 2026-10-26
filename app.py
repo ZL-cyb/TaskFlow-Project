@@ -16,7 +16,7 @@ judul.pack(pady=20)
 
 #Tempat menampilkan daftar tugas
 daftar_tugas = tk.Frame(window)
-daftar_tugas.pack(pady=10)
+daftar_tugas.pack(pady=10, fill="x")
 
 #fungsi yg dijalankan ketika tombol di klik
 def tambah_tugas():
@@ -26,13 +26,25 @@ def tambah_tugas():
 
     )
 
-    if tugas:
-        label_tugas = tk.Label(
-            daftar_tugas,
-           text=f"• {tugas}",
-           font=("Arial", 12,)
+    if tugas and tugas.strip():
+        baris_tugas = tk.Frame(daftar_tugas)
+        baris_tugas.pack(fill="x", padx=20, pady=3)
+        
+        checkbox = tk.Checkbutton(
+            baris_tugas,
+            text=tugas.strip(),
+            font=("Arial", 12)
         )
-        label_tugas.pack(anchor="w", padx=20, pady=3)
+        checkbox.pack(side="left")
+        
+        tombol_hapus = tk.Button(
+            baris_tugas,
+            text="Hapus",
+            command=baris_tugas.destroy
+        )
+        
+        tombol_hapus.pack(side="right")
+        
         
 #Tombol tambah tugas
 tombol = tk.Button(
