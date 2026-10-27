@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import simpledialog
+from tkinter import ttk
 import json
 from pathlib import Path
 
@@ -48,7 +49,7 @@ def tampilkan_daftar_tugas():
         
         checkbox = tk.Checkbutton(
             baris,
-            text=tugas["nama"],
+            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas, Sedang")}',
             variable=status,
             font=("Arial", 12),
             command=lambda t=tugas, s=status: ubah_status(t, s)
@@ -76,14 +77,43 @@ def tambah_tugas():
     )
 
     if nama and nama .strip():
-        daftar_data.append({
-            "nama": nama .strip(),
-            "selesai": False
-            })
+        pilihan = tk.Toplevel(window)
+        pilihan.title("Pilihan Prioritas")
+        pilihan.geometry("300x150")
+        pilihan.transient(window)
+        pilihan.grab_set()
         
+        tk.Label(
+            pilihan,
+            text="Pilihan Prioritas Tugas:",
+        ).pack(pady=10)
+        
+        prioritas = tk.StringVar(value="Sedang")
+
+        ttk.Combobox(
+            pilihan,
+            textvariable=prioritas,
+            values=["Tinggi", "Sedang", "Rendah"],
+            state="readonly"
+        ).pack(pady=5)
+        
+    def simpan_prioritas():
+        daftar_data.append({
+             "nama": nama.strip(),
+             "selesai": False,
+             "prioritas": prioritas.get()
+             })
+    
         simpan_tugas()
         tampilkan_daftar_tugas()
-        
+        pilihan.destroy()
+    
+    tk.Button(  
+    pilihan,
+    text="Simpan",
+    command=simpan_prioritas
+    ).pack(pady=10)
+    
 #Menghapus tugas
 def hapus_tugas(tugas):
     daftar_data.remove(tugas)
