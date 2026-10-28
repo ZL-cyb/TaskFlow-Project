@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import simpledialog
-from tkinter import ttk
+from tkinter import simpledialog, ttk
 import json
 from pathlib import Path
 
@@ -19,15 +18,28 @@ def muat_tugas():
         with open(file_tugas, "r" , encoding="utf-8") as file:
             daftar_data = json.load(file)
 
-#Menyimpan tugas ke file 
+#Menyimpan tugas ke file JSON
 def simpan_tugas():
     with open(file_tugas, "w", encoding="utf-8") as file:
         json.dump(daftar_data, file, indent=4 , ensure_ascii=False)
         
+#Mengurutkan tugas by prioritas
+def urutkan_tugas ():
+    urutan ={
+        "Tinggi": 1,
+        "Sedang": 2,
+        "Rendah": 3
+    }
+     
+    daftar_data.sort(
+        key=lambda tugas: urutan.get(
+            tugas.get("prioritas", "Sedang"), 2
+        )
+    )    
         
 judul = tk.Label(
     window,
-    text="Daftar tugas saya",
+    text="Daftar Tugas Saya",
     font=("Arial", 18, "bold")
     
 )
@@ -40,8 +52,12 @@ daftar_tugas.pack(pady=10, fill="x")
 def tampilkan_daftar_tugas():
     for widget in daftar_tugas.winfo_children():
         widget.destroy()
+        
+    urutkan_tugas()
 
     for tugas in daftar_data:
+        tugas.setdefault("prioritas", "Sedang")
+        
         baris = tk.Frame(daftar_tugas)
         baris.pack(fill="x", padx=20, pady=3)
 
@@ -55,7 +71,14 @@ def tampilkan_daftar_tugas():
             command=lambda t=tugas, s=status: ubah_status(t, s)
         )
         checkbox.pack(side="left")
-
+        
+        tombol_ubah = tk.Button(
+            baris,
+            text="Ubah Prioritas",
+            command=lambda t=tugas: ubah_prioritas(t)
+        )
+        tombol_ubah.pack(side="right", padx=5)
+        
         tombol_hapus = tk.Button(
             baris,
             text="Hapus",
@@ -103,7 +126,7 @@ def tambah_tugas():
              "selesai": False,
              "prioritas": prioritas.get()
              })
-    
+        urutkan_tugas()
         simpan_tugas()
         tampilkan_daftar_tugas()
         pilihan.destroy()
@@ -113,6 +136,44 @@ def tambah_tugas():
     text="Simpan",
     command=simpan_prioritas
     ).pack(pady=10)
+    
+#Mengubah prioritas tugas yg sudah ada
+def ubah_prioritas(tugas):
+    pilihan = tk.Toplevel(window)
+    pilihan.title("Ubah Prioritas")
+    pilihan.geometry("300x150")
+    pilihan.transient(window)
+    pilihan.grab_set()
+    
+    tk.Label(
+         pilihan,
+         text=f'Prioritas: {tugas["nama"]}'
+        ).pack(pady=10)
+    
+    prioritas = tk.StringVar(
+        value=tugas.get("prioritas", "Sedang")
+    )
+    
+    ttk.Combobox(
+        pilihan,
+        textvariable=prioritas,
+        values=["Tinggi", "Sedang", "Rendah"],
+        state="readonly"
+    ).pack(pady=5)
+    
+    def simpan_perubahan():
+            tugas["prioritas"] = prioritas.get()
+    
+            urutkan_tugas()
+            simpan_tugas()
+            tampilkan_daftar_tugas()
+            pilihan.destroy()
+            
+    tk.Button(
+            pilihan,
+            text="Simpan Perubahan",
+            command=simpan_perubahan
+        ).pack(pady=10)
     
 #Menghapus tugas
 def hapus_tugas(tugas):

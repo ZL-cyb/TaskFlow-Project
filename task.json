@@ -1,1 +1,17 @@
-[]
+[
+    {
+        "nama": "j",
+        "selesai": false,
+        "prioritas": "Tinggi"
+    },
+    {
+        "nama": "s",
+        "selesai": false,
+        "prioritas": "Sedang"
+    },
+    {
+        "nama": "k",
+        "selesai": false,
+        "prioritas": "Rendah"
+    }
+]
