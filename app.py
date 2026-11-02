@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import simpledialog, ttk
 import json
 from pathlib import Path
+from datetime import datetime
 
 window = tk.Tk()
 window.title("Taskflow")
@@ -60,12 +61,14 @@ def tampilkan_daftar_tugas():
         
         baris = tk.Frame(daftar_tugas)
         baris.pack(fill="x", padx=20, pady=3)
-
+    
         status = tk.BooleanVar(value=tugas["selesai"])
-        
+    
+        deadline = tugas.get("deadline", "Belum ditentukan")
+            
         checkbox = tk.Checkbutton(
             baris,
-            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas, Sedang")}',
+            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas, Sedang")} - Dealine: {deadline}',
             variable=status,
             font=("Arial", 12),
             command=lambda t=tugas, s=status: ubah_status(t, s)
@@ -96,21 +99,42 @@ def tambah_tugas():
     nama = simpledialog.askstring(
         "Tambah Tugas",
         "Masukan nama tugas"
-
     )
+    
+    if nama and nama.strip():
 
-    if nama and nama .strip():
+        # Meminta tanggal deadline
+        while True:
+            deadline = simpledialog.askstring(
+                "Deadline Tugas",
+                "Masukkan tanggal (DD-MM-YYYY):\nContoh: 12-12-2026"
+            )
+
+            if deadline is None:
+                return
+
+            if deadline.strip() == "":
+                deadline = "Belum ditentukan"
+                break
+
+            try:
+                datetime.strptime(deadline, "%d-%m-%Y")
+                break
+            except ValueError:
+                continue
+
+        # Membuat pop-up pilihan prioritas
         pilihan = tk.Toplevel(window)
         pilihan.title("Pilihan Prioritas")
         pilihan.geometry("300x150")
         pilihan.transient(window)
         pilihan.grab_set()
-        
+
         tk.Label(
             pilihan,
-            text="Pilihan Prioritas Tugas:",
+            text="Pilihan Prioritas Tugas:"
         ).pack(pady=10)
-        
+
         prioritas = tk.StringVar(value="Sedang")
 
         ttk.Combobox(
@@ -119,23 +143,26 @@ def tambah_tugas():
             values=["Tinggi", "Sedang", "Rendah"],
             state="readonly"
         ).pack(pady=5)
-        
-    def simpan_prioritas():
-        daftar_data.append({
-             "nama": nama.strip(),
-             "selesai": False,
-             "prioritas": prioritas.get()
-             })
-        urutkan_tugas()
-        simpan_tugas()
-        tampilkan_daftar_tugas()
-        pilihan.destroy()
-    
-    tk.Button(  
-    pilihan,
-    text="Simpan",
-    command=simpan_prioritas
-    ).pack(pady=10)
+
+        # Menyimpan tugas
+        def simpan_prioritas():
+            daftar_data.append({
+                "nama": nama.strip(),
+                "selesai": False,
+                "prioritas": prioritas.get(),
+                "deadline": deadline
+            })
+
+            urutkan_tugas()
+            simpan_tugas()
+            tampilkan_daftar_tugas()
+            pilihan.destroy()
+
+        tk.Button(
+            pilihan,
+            text="Simpan",
+            command=simpan_prioritas
+        ).pack(pady=10)
     
 #Mengubah prioritas tugas yg sudah ada
 def ubah_prioritas(tugas):

@@ -1,17 +1,8 @@
 [
     {
-        "nama": "j",
+        "nama": "ja",
         "selesai": false,
-        "prioritas": "Tinggi"
-    },
-    {
-        "nama": "s",
-        "selesai": false,
-        "prioritas": "Sedang"
-    },
-    {
-        "nama": "k",
-        "selesai": false,
-        "prioritas": "Rendah"
+        "prioritas": "Sedang",
+        "deadline": "12-12-2026"
     }
 ]
