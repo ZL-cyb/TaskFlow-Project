@@ -82,6 +82,13 @@ def tampilkan_daftar_tugas():
         )
         tombol_ubah.pack(side="right", padx=5)
         
+        tombol_deadline = tk.Button(
+            baris,
+            text="Ubah Deadline",
+            command=lambda t=tugas: ubah_deadline(t)
+        )
+        tombol_deadline.pack(side="right", padx=5)
+        
         tombol_hapus = tk.Button(
             baris,
             text="Hapus",
@@ -201,7 +208,31 @@ def ubah_prioritas(tugas):
             text="Simpan Perubahan",
             command=simpan_perubahan
         ).pack(pady=10)
+
+#Mengubah deadline tugas
+def ubah_deadline(tugas):
+    deadline_baru =simpledialog.askstring(
+        "Ubah Deadline",
+        "Masukan tanggal baru (DD-MM-YYYY):\n"
+        "Kosongkan jika ingin menghapus deadline"
+    )
     
+    if deadline_baru is None:
+        return
+    
+    if deadline_baru.strip() == "":
+        tugas["deadline"] = "Belum ditentukan"
+    else:
+        try:
+            datetime.strptime(deadline_baru, "%d-%m-%Y")
+        except ValueError:
+            return
+        
+        tugas["deadline"] = deadline_baru
+        
+    simpan_tugas()
+    tampilkan_daftar_tugas()
+        
 #Menghapus tugas
 def hapus_tugas(tugas):
     daftar_data.remove(tugas)
