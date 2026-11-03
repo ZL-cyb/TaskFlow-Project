@@ -65,10 +65,11 @@ def tampilkan_daftar_tugas():
         status = tk.BooleanVar(value=tugas["selesai"])
     
         deadline = tugas.get("deadline", "Belum ditentukan")
+        peringatan = cek_deadline(tugas)
             
         checkbox = tk.Checkbutton(
             baris,
-            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas, Sedang")} - Dealine: {deadline}',
+            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas, Sedang")} - Dealine: {deadline} ({peringatan})',
             variable=status,
             font=("Arial", 12),
             command=lambda t=tugas, s=status: ubah_status(t, s)
@@ -232,7 +233,38 @@ def ubah_deadline(tugas):
         
     simpan_tugas()
     tampilkan_daftar_tugas()
+    
+#Mengecek stat deadline
+def cek_deadline(tugas):
+    if tugas["selesai"]:
+        return "Selesai"
+    
+    deadline = tugas.get("deadline", "Belum ditentukan")
+    
+    if deadline == "Belum ditentukan":
+        return "Belum ada deadline"
+    
+    try:
+        tanggal = datetime.strptime(
+            deadline, "%d-%m-%Y"
+        ).date()
         
+        hari_ini = datetime.now().date()
+        selisih = (tanggal - hari_ini).days
+        
+        if selisih < 0:
+            return f"Terlambat{abs(selisih)} hari"
+        elif selisih == 0:
+            return "Deadline hari ini!"
+        elif selisih == 1:
+            return "Deadline besok!"
+        elif selisih <= 3:
+            return f"Deadline {selisih} hari lagi"
+        else:
+            return f"{selisih} hari lagi"
+        
+    except ValueError:
+        return "Tanggal tidak valid"
 #Menghapus tugas
 def hapus_tugas(tugas):
     daftar_data.remove(tugas)
