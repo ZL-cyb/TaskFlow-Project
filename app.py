@@ -73,6 +73,23 @@ label_belum =tk.Label(
 )
 label_belum.pack(side="left", padx=15)
 
+#Progres pengerjaan tugas
+label_progress = tk.Label(
+    window,
+    text="Progress: 0%",
+    font=("Arial", 11, "bold")
+)
+label_progress.pack(padx=5)
+
+progress_bar = ttk.Progressbar(
+    window,
+    orient="horizontal",
+    length=300,
+    mode="determinate",
+    maximum=100
+)
+progress_bar.pack(padx=5)
+
 daftar_tugas = tk.Frame(window)
 daftar_tugas.pack(pady=10, fill="x")
 
@@ -90,6 +107,18 @@ def perbarui_statistik():
     label_total.config(text=f"Total: {total}")
     label_selesai.config(text=f"Selesai: {selesai}")
     label_belum.config(text=f"Belum selesai: {belum}")
+    
+    #menghitung presentase tugas selesai
+    if total > 0:
+        presentase = (selesai / total) * 100
+    else:
+        presentase = 0
+        
+    progress_bar["value"] = presentase
+        
+    label_progress.config(
+            text=f"Progress: {presentase:.0f}%"
+    )
 
 #Menampilkan daftar tugas
 def tampilkan_daftar_tugas():

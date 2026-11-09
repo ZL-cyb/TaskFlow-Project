@@ -1,7 +1,7 @@
 [
     {
         "nama": "ja",
-        "selesai": false,
+        "selesai": true,
         "prioritas": "Tinggi",
         "deadline": "9-9-1999"
     },
@@ -9,6 +9,18 @@
         "nama": "ja",
         "selesai": false,
         "prioritas": "Sedang",
+        "deadline": "12-12-2026"
+    },
+    {
+        "nama": "k",
+        "selesai": false,
+        "prioritas": "Sedang",
+        "deadline": "12-12-2026"
+    },
+    {
+        "nama": "l",
+        "selesai": false,
+        "prioritas": "Rendah",
         "deadline": "12-12-2026"
     }
 ]
