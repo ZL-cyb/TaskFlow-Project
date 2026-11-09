@@ -90,6 +90,23 @@ progress_bar = ttk.Progressbar(
 )
 progress_bar.pack(padx=5)
 
+#Filter daftar tugas 
+filter_status = tk.StringVar(value="Semua")
+
+pilihan_filter = ttk.Combobox(
+    window,
+    textvariable=filter_status,
+    values=["Semua", "Belum selesai", "Selesai"],
+    state="readonly",
+    width=20
+)
+pilihan_filter.pack(padx=10)
+
+pilihan_filter.bind(
+    "<<ComboboxSelected>>",
+    lambda event: tampilkan_daftar_tugas()
+)
+
 daftar_tugas = tk.Frame(window)
 daftar_tugas.pack(pady=10, fill="x")
 
@@ -131,6 +148,14 @@ def tampilkan_daftar_tugas():
     for tugas in daftar_data:
         tugas.setdefault("prioritas", "Sedang")
         
+        pilihan = filter_status.get()
+        
+        if pilihan == "Belum selesai" and tugas.get("selesai", False):
+            continue
+        
+        if pilihan == "Selesai" and not tugas.get("selesai", False):
+            continue
+        
         baris = tk.Frame(daftar_tugas)
         baris.pack(fill="x", padx=20, pady=3)
     
@@ -141,7 +166,7 @@ def tampilkan_daftar_tugas():
             
         checkbox = tk.Checkbutton(
             baris,
-            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas, Sedang")} - Dealine: {deadline} ({peringatan})',
+            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas", "Sedang")} - Deadline: {deadline} ({peringatan})',
             variable=status,
             font=("Arial", 12),
             command=lambda t=tugas, s=status: ubah_status(t, s)
