@@ -13,7 +13,7 @@
     },
     {
         "nama": "k",
-        "selesai": false,
+        "selesai": true,
         "prioritas": "Sedang",
         "deadline": "12-12-2026"
     },

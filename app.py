@@ -198,7 +198,7 @@ def tampilkan_daftar_tugas():
 def ubah_status(tugas, status):
         tugas["selesai"] = status.get()
         simpan_tugas()
-        perbarui_statistik()
+        tampilkan_daftar_tugas()
         
 #Menambah tugas baru
 def tambah_tugas():
