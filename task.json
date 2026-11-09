@@ -1,11 +1,5 @@
 [
     {
-        "nama": "k",
-        "selesai": false,
-        "prioritas": "Tinggi",
-        "deadline": "8-9-1111"
-    },
-    {
         "nama": "ja",
         "selesai": false,
         "prioritas": "Tinggi",

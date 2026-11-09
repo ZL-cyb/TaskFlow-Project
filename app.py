@@ -46,8 +46,50 @@ judul = tk.Label(
 )
 judul.pack(pady=20)
 
+#Tampilan statistik tugas
+statistik_frame = tk.Frame(window)
+statistik_frame.pack(padx=10)
+
+label_total = tk.Label(
+    statistik_frame,
+    text="Total: 0",
+    font=("Arial", 12, "bold" ),
+)
+label_total.pack(side="left", padx=15)
+
+label_selesai = tk.Label(
+    statistik_frame,
+    text="Selesai: 0",
+    font=("Arial", 12, "bold"),
+    fg="green"
+)
+label_selesai.pack(side="left", padx=15)
+
+label_belum =tk.Label(
+    statistik_frame,
+    text="Belum selesai: 0",
+    font=("Arial", 12, "bold"),
+    fg="orange"
+)
+label_belum.pack(side="left", padx=15)
+
 daftar_tugas = tk.Frame(window)
 daftar_tugas.pack(pady=10, fill="x")
+
+#Memperbarui statistik tugas
+def perbarui_statistik():
+    total = len(daftar_data)
+    
+    selesai = sum(
+        1 for tugas in daftar_data
+        if tugas.get("selesai", False)
+    )
+    
+    belum = total - selesai
+    
+    label_total.config(text=f"Total: {total}")
+    label_selesai.config(text=f"Selesai: {selesai}")
+    label_belum.config(text=f"Belum selesai: {belum}")
 
 #Menampilkan daftar tugas
 def tampilkan_daftar_tugas():
@@ -55,6 +97,7 @@ def tampilkan_daftar_tugas():
         widget.destroy()
         
     urutkan_tugas()
+    perbarui_statistik()
 
     for tugas in daftar_data:
         tugas.setdefault("prioritas", "Sedang")
@@ -101,6 +144,7 @@ def tampilkan_daftar_tugas():
 def ubah_status(tugas, status):
         tugas["selesai"] = status.get()
         simpan_tugas()
+        perbarui_statistik()
         
 #Menambah tugas baru
 def tambah_tugas():
