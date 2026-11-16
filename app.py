@@ -153,33 +153,59 @@ label_belum = tk.Label(
 label_belum.pack()
 
 #Progres pengerjaan tugas
-label_progress = tk.Label(
+# Progress pengerjaan tugas
+progress_frame = tk.Frame(
     window,
-    text="Progress: 0%",
-    font=("Arial", 11, "bold")
+    bg="#F4F6FA",
+    padx=25,
+    pady=10
 )
-label_progress.pack(padx=5)
+progress_frame.pack(fill="x")
+
+label_progress = tk.Label(
+    progress_frame,
+    text="Progress: 0%",
+    font=("Segoe UI", 10, "bold"),
+    bg="#F4F6FA",
+    fg="#334155"
+)
+label_progress.pack(anchor="w")
 
 progress_bar = ttk.Progressbar(
-    window,
+    progress_frame,
     orient="horizontal",
     length=300,
     mode="determinate",
     maximum=100
 )
-progress_bar.pack(padx=5)
+progress_bar.pack(fill="x", pady=8)
 
 #Filter daftar tugas 
+# Filter daftar tugas
+filter_frame = tk.Frame(
+    window,
+    bg="#F4F6FA"
+)
+filter_frame.pack(fill="x", padx=25, pady=5)
+
+tk.Label(
+    filter_frame,
+    text="Filter tugas:",
+    font=("Segoe UI", 10, "bold"),
+    bg="#F4F6FA",
+    fg="#334155"
+).pack(side="left", padx=(0, 10))
+
 filter_status = tk.StringVar(value="Semua")
 
 pilihan_filter = ttk.Combobox(
-    window,
+    filter_frame,
     textvariable=filter_status,
     values=["Semua", "Belum selesai", "Selesai"],
     state="readonly",
     width=20
 )
-pilihan_filter.pack(padx=10)
+pilihan_filter.pack(side="left")
 
 pilihan_filter.bind(
     "<<ComboboxSelected>>",
@@ -190,17 +216,32 @@ pilihan_filter.bind(
 frame_rekomendasi = tk.Frame(
     window,
     bg="#E8F3FF",
-    padx=10,
-    pady=10
+    padx=20,
+    pady=15
 )
-frame_rekomendasi.pack(fill="x", padx=20, pady=10)
+frame_rekomendasi.pack(
+    fill="x",
+    padx=25,
+    pady=15
+)
+
+tk.Label(
+    frame_rekomendasi,
+    text="REKOMENDASI UNTUK KAMU",
+    font=("Segoe UI", 10, "bold"),
+    bg="white",
+    fg="#2563EB"
+).pack(anchor="w", pady=(0, 8))
+
 
 label_rekomendasi = tk.Label(
     frame_rekomendasi,
     text="Rekomendasi Tugas: Belum ada",
-    font=("Arial", 12, "bold"),
-    bg="#E8F3FF",
-    fg="#1E3A5F"
+    font=("Segoe UI", 11),
+    bg="white",
+    fg="#334155",
+    justify="left",
+    wraplength=900
 )
 label_rekomendasi.pack(anchor="w")
 
