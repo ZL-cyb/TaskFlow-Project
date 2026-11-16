@@ -57,14 +57,35 @@ def urutkan_tugas ():
             tugas.get("prioritas", "Sedang"), 2
         )
     )    
-        
-judul = tk.Label(
+
+# Header aplikasi
+header_frame = tk.Frame(
     window,
-    text="Daftar Tugas Saya",
-    font=("Arial", 18, "bold")
-    
+    bg="#F4F6FA"
 )
-judul.pack(pady=20)
+header_frame.pack(
+    fill="x",
+    padx=30,
+    pady=(20, 10)
+)
+
+judul = tk.Label(
+    header_frame,
+    text="TaskFlow",
+    font=("Segoe UI", 24, "bold"),
+    bg="#F4F6FA",
+    fg="#1E293B"
+)
+judul.pack(anchor="w")
+
+subjudul = tk.Label(
+    header_frame,
+    text="Kelola tugasmu, atur prioritas, dan capai targetmu.",
+    font=("Segoe UI", 10),
+    bg="#F4F6FA",
+    fg="#64748B"
+)
+subjudul.pack(anchor="w", pady=(2, 0))
 
 #Tampilan statistik tugas
 # Dashboard statistik tugas
@@ -256,6 +277,20 @@ footer_frame.pack(
     pady=10
 )
 
+# Judul bagian daftar tugas
+judul_daftar = tk.Label(
+    window,
+    text="Daftar Tugas",
+    font=("Segoe UI", 15, "bold"),
+    bg="#F4F6FA",
+    fg="#1E293B"
+)
+judul_daftar.pack(
+    anchor="w",
+    padx=30,
+    pady=(10, 0)
+)
+
 # Area daftar tugas yang bisa di-scroll
 area_tugas = tk.Frame(
     window,
@@ -415,16 +450,19 @@ def tampilkan_daftar_tugas():
         peringatan = cek_deadline(tugas)
 
         checkbox = tk.Checkbutton(
-            baris,
-            text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas", "Sedang")} - Deadline: {deadline} ({peringatan})',
-            variable=status,
-            font=("Segoe UI", 10),
-            bg="white",
-            fg="#334155",
-            activebackground="white",
-            selectcolor="white",
-            command=lambda t=tugas, s=status: ubah_status(t, s)
-        )
+        baris,
+        text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas", "Sedang")} - Deadline: {deadline} ({peringatan})',
+        variable=status,
+        font=("Segoe UI", 10),
+        bg="white",
+        fg="#334155",
+        activebackground="white",
+        activeforeground="#1E293B",
+        selectcolor="white",
+        relief="flat",
+        anchor="w",
+        command=lambda t=tugas, s=status: ubah_status(t, s)
+)
         checkbox.pack(side="left", fill="x", expand=True)
 
         tombol_ubah = tk.Button(
@@ -508,15 +546,20 @@ def tambah_tugas():
 
         # Membuat pop-up pilihan prioritas
         pilihan = tk.Toplevel(window)
-        pilihan.title("Pilihan Prioritas")
-        pilihan.geometry("300x150")
+        pilihan.title("Pilih Prioritas")
+        pilihan.geometry("350x200")
+        pilihan.resizable(False, False)
+        pilihan.configure(bg="#F4F6FA")
         pilihan.transient(window)
         pilihan.grab_set()
 
         tk.Label(
             pilihan,
-            text="Pilihan Prioritas Tugas:"
-        ).pack(pady=10)
+             text="Tentukan prioritas tugas",
+             font=("Segoe UI", 12, "bold"),
+             bg="#F4F6FA",
+             fg="#1E293B"
+        ).pack(pady=(20, 12))
 
         prioritas = tk.StringVar(value="Sedang")
 
@@ -524,7 +567,8 @@ def tambah_tugas():
             pilihan,
             textvariable=prioritas,
             values=["Tinggi", "Sedang", "Rendah"],
-            state="readonly"
+            state="readonly",
+            width=25
         ).pack(pady=5)
 
         # Menyimpan tugas
@@ -544,21 +588,43 @@ def tambah_tugas():
         tk.Button(
             pilihan,
             text="Simpan",
-            command=simpan_prioritas
-        ).pack(pady=10)
+            command=simpan_prioritas,
+            font=("Segoe UI", 10, "bold"),
+            bg="#2563EB",
+            fg="white",
+            activebackground="#1D4ED8",
+            activeforeground="white",
+            relief="flat",
+            padx=18,
+            pady=7,
+            cursor="hand2"
+        ).pack(pady=15)
     
 #Mengubah prioritas tugas yg sudah ada
 def ubah_prioritas(tugas):
     pilihan = tk.Toplevel(window)
     pilihan.title("Ubah Prioritas")
-    pilihan.geometry("300x150")
+    pilihan.geometry("350x200")
+    pilihan.resizable(False, False)
+    pilihan.configure(bg="#F4F6FA")
     pilihan.transient(window)
     pilihan.grab_set()
     
     tk.Label(
-         pilihan,
-         text=f'Prioritas: {tugas["nama"]}'
-        ).pack(pady=10)
+    pilihan,
+    text=f'Ubah prioritas tugas',
+    font=("Segoe UI", 12, "bold"),
+    bg="#F4F6FA",
+    fg="#1E293B"
+).pack(pady=(20, 5))
+
+    tk.Label(
+    pilihan,
+    text=tugas["nama"],
+    font=("Segoe UI", 10),
+    bg="#F4F6FA",
+    fg="#64748B"
+).pack(pady=5)
     
     prioritas = tk.StringVar(
         value=tugas.get("prioritas", "Sedang")
@@ -568,7 +634,8 @@ def ubah_prioritas(tugas):
         pilihan,
         textvariable=prioritas,
         values=["Tinggi", "Sedang", "Rendah"],
-        state="readonly"
+        state="readonly",
+        width=25
     ).pack(pady=5)
     
     def simpan_perubahan():
@@ -582,8 +649,17 @@ def ubah_prioritas(tugas):
     tk.Button(
             pilihan,
             text="Simpan Perubahan",
-            command=simpan_perubahan
-        ).pack(pady=10)
+            command=simpan_perubahan,
+            font=("Segoe UI", 10, "bold"),
+            bg="#2563EB",
+            fg="white",
+            activebackground="#1D4ED8",
+            activeforeground="white",
+            relief="flat",
+            padx=18,
+            pady=7,
+            cursor="hand2"
+        ).pack(pady=12)
 
 #rekomendasi tugas 
 def rekomendasi_tugas():
