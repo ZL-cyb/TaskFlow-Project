@@ -245,16 +245,92 @@ label_rekomendasi = tk.Label(
 )
 label_rekomendasi.pack(anchor="w")
 
-
-# Daftar tugas
-daftar_tugas = tk.Frame(
+# Footer untuk tombol tambah tugas
+footer_frame = tk.Frame(
     window,
     bg="#F4F6FA"
 )
-daftar_tugas.pack(
-    pady=10,
+footer_frame.pack(
+    side="bottom",
+    fill="x",
+    pady=10
+)
+
+# Area daftar tugas yang bisa di-scroll
+area_tugas = tk.Frame(
+    window,
+    bg="#F4F6FA"
+)
+area_tugas.pack(
+    fill="both",
+    expand=True,
     padx=25,
-    fill="x"
+    pady=10
+)
+
+canvas_tugas = tk.Canvas(
+    area_tugas,
+    bg="#F4F6FA",
+    highlightthickness=0
+)
+canvas_tugas.pack(
+    side="left",
+    fill="both",
+    expand=True
+)
+
+scrollbar_tugas = ttk.Scrollbar(
+    area_tugas,
+    orient="vertical",
+    command=canvas_tugas.yview
+)
+scrollbar_tugas.pack(side="right", fill="y")
+
+canvas_tugas.configure(
+    yscrollcommand=scrollbar_tugas.set
+)
+
+daftar_tugas = tk.Frame(
+    canvas_tugas,
+    bg="#F4F6FA"
+)
+
+canvas_window = canvas_tugas.create_window(
+    (0, 0),
+    window=daftar_tugas,
+    anchor="nw"
+)
+
+def sesuaikan_scroll(event):
+    canvas_tugas.configure(
+        scrollregion=canvas_tugas.bbox("all")
+    )
+
+def sesuaikan_lebar(event):
+    canvas_tugas.itemconfigure(
+        canvas_window,
+        width=event.width
+    )
+
+daftar_tugas.bind(
+    "<Configure>",
+    sesuaikan_scroll
+)
+
+canvas_tugas.bind(
+    "<Configure>",
+    sesuaikan_lebar
+)
+
+def scroll_mouse(event):
+    canvas_tugas.yview_scroll(
+        int(-1 * (event.delta / 120)),
+        "units"
+    )
+
+canvas_tugas.bind_all(
+    "<MouseWheel>",
+    scroll_mouse
 )
 
 #Memperbarui statistik tugas
@@ -615,7 +691,7 @@ def hapus_tugas(tugas):
     
 #Tombol tambah tugas
 tombol = tk.Button(
-    window,
+    footer_frame,
     text="+ Tambah Tugas",
     command=tambah_tugas,
     font=("Segoe UI", 11, "bold"),
@@ -629,7 +705,7 @@ tombol = tk.Button(
     cursor="hand2"
 )
 
-tombol.pack(pady=15)
+tombol.pack()
 
 muat_tugas()
 tampilkan_daftar_tugas()
