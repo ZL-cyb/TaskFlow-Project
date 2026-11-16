@@ -107,6 +107,30 @@ pilihan_filter.bind(
     lambda event: tampilkan_daftar_tugas()
 )
 
+# Tampilan rekomendasi tugas
+frame_rekomendasi = tk.Frame(
+    window,
+    bg="#E8F3FF",
+    padx=10,
+    pady=10
+)
+frame_rekomendasi.pack(fill="x", padx=20, pady=10)
+
+label_rekomendasi = tk.Label(
+    frame_rekomendasi,
+    text="Rekomendasi Tugas: Belum ada",
+    font=("Arial", 12, "bold"),
+    bg="#E8F3FF",
+    fg="#1E3A5F"
+)
+label_rekomendasi.pack(anchor="w")
+
+
+# Daftar tugas
+daftar_tugas = tk.Frame(window)
+daftar_tugas.pack(pady=10, fill="x")
+
+
 daftar_tugas = tk.Frame(window)
 daftar_tugas.pack(pady=10, fill="x")
 
@@ -144,6 +168,23 @@ def tampilkan_daftar_tugas():
         
     urutkan_tugas()
     perbarui_statistik()
+    
+    tugas_rekomendasi = rekomendasi_tugas()
+    
+    if tugas_rekomendasi:
+        label_rekomendasi.config(
+            text=(
+                   f"Rekomendasi Tugas: {tugas_rekomendasi['nama']}\n"
+                   f"Prioritas: {tugas_rekomendasi.get('prioritas', 'Sedang')}\n"
+                   f"Deadline: {tugas_rekomendasi.get('deadline', 'Belum ditentukan')}\n"
+                   f"Sebaiknya kerjakan tugas ini terlebih dahulu!"
+            )
+        )
+    else:
+        label_rekomendasi.config(
+            text="Semua tugas sudah selesai"
+        )
+    
 
     for tugas in daftar_data:
         tugas.setdefault("prioritas", "Sedang")
@@ -307,6 +348,49 @@ def ubah_prioritas(tugas):
             text="Simpan Perubahan",
             command=simpan_perubahan
         ).pack(pady=10)
+
+#rekomendasi tugas 
+def rekomendasi_tugas():
+    tugas_belum_selesai = [
+        tugas for tugas in daftar_data
+        if not tugas.get("selesai", False)
+    ]
+    
+    if not tugas_belum_selesai:
+        return None
+    
+    urutan_prioritas = {
+        "Tinggi": 1,
+        "Sedang": 2,
+        "Rendah": 3
+    }
+    
+    def nilai_tugas(tugas):
+        deadline = tugas.get("deadline", "Belum ditentukan")
+
+        if deadline == "Belum ditentukan":
+            tanggal = datetime.max.date()
+        else:
+            tanggal = datetime.strptime(
+                deadline, "%d-%m-%Y"
+            ).date()
+            
+        hari_ini = datetime.now().date()
+        
+        if tanggal < hari_ini:
+            status_deadline = 0
+        elif tanggal == hari_ini:
+            status_deadline = 1
+        else:
+            status_deadline = 2
+            
+        return (
+            status_deadline,
+            tanggal,
+            urutan_prioritas.get(tugas.get("prioritas", "Sedang"), 2)
+        )
+        
+    return min(tugas_belum_selesai, key=nilai_tugas)
 
 #Mengubah deadline tugas
 def ubah_deadline(tugas):
