@@ -8,7 +8,7 @@ window = tk.Tk()
 window.title("TaskFlow - Task Management")
 window.geometry("1000x650")
 window.minsize(850, 550)
-window.configure(bg="#F4F65A")
+window.configure(bg="#F4F6FA")
 
 #Set tema app
 style = ttk.Style()
@@ -67,31 +67,90 @@ judul = tk.Label(
 judul.pack(pady=20)
 
 #Tampilan statistik tugas
-statistik_frame = tk.Frame(window)
-statistik_frame.pack(padx=10)
+# Dashboard statistik tugas
+statistik_frame = tk.Frame(
+    window,
+    bg="#F4F6FA"
+)
+statistik_frame.pack(fill="x", padx=25, pady=15)
+
+# Kartu Total Tugas
+card_total = tk.Frame(
+    statistik_frame,
+    bg="white",
+    padx=25,
+    pady=18
+)
+card_total.pack(side="left", expand=True, fill="x", padx=8)
+
+tk.Label(
+    card_total,
+    text="TOTAL TUGAS",
+    font=("Segoe UI", 10, "bold"),
+    bg="white",
+    fg="#64748B"
+).pack()
 
 label_total = tk.Label(
-    statistik_frame,
-    text="Total: 0",
-    font=("Arial", 12, "bold" ),
+    card_total,
+    text="0",
+    font=("Segoe UI", 24, "bold"),
+    bg="white",
+    fg="#2563EB"
 )
-label_total.pack(side="left", padx=15)
+label_total.pack()
+
+# Kartu Tugas Selesai
+card_selesai = tk.Frame(
+    statistik_frame,
+    bg="white",
+    padx=25,
+    pady=18
+)
+card_selesai.pack(side="left", expand=True, fill="x", padx=8)
+
+tk.Label(
+    card_selesai,
+    text="TUGAS SELESAI",
+    font=("Segoe UI", 10, "bold"),
+    bg="white",
+    fg="#64748B"
+).pack()
 
 label_selesai = tk.Label(
-    statistik_frame,
-    text="Selesai: 0",
-    font=("Arial", 12, "bold"),
-    fg="green"
+    card_selesai,
+    text="0",
+    font=("Segoe UI", 24, "bold"),
+    bg="white",
+    fg="#16A34A"
 )
-label_selesai.pack(side="left", padx=15)
+label_selesai.pack()
 
-label_belum =tk.Label(
+# Kartu Tugas Belum Selesai
+card_belum = tk.Frame(
     statistik_frame,
-    text="Belum selesai: 0",
-    font=("Arial", 12, "bold"),
-    fg="orange"
+    bg="white",
+    padx=25,
+    pady=18
 )
-label_belum.pack(side="left", padx=15)
+card_belum.pack(side="left", expand=True, fill="x", padx=8)
+
+tk.Label(
+    card_belum,
+    text="BELUM SELESAI",
+    font=("Segoe UI", 10, "bold"),
+    bg="white",
+    fg="#64748B"
+).pack()
+
+label_belum = tk.Label(
+    card_belum,
+    text="0",
+    font=("Segoe UI", 24, "bold"),
+    bg="white",
+    fg="#EA580C"
+)
+label_belum.pack()
 
 #Progres pengerjaan tugas
 label_progress = tk.Label(
