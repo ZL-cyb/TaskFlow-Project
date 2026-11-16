@@ -5,8 +5,28 @@ from pathlib import Path
 from datetime import datetime
 
 window = tk.Tk()
-window.title("Taskflow")
-window.geometry("800x500")
+window.title("TaskFlow - Task Management")
+window.geometry("1000x650")
+window.minsize(850, 550)
+window.configure(bg="#F4F65A")
+
+#Set tema app
+style = ttk.Style()
+style.theme_use("clam")
+
+style.configure(
+    "TCombobox",
+    padding=6,
+    font=("Segoe UI", 10)
+)
+
+style.configure(
+    "Horizontal.TProgressbar",
+    troughcolor="#E2E8F0",
+    background="#2563EB",
+    thickness=10
+)
+
 
 file_tugas = Path(__file__).with_name("task.json")
 daftar_data =[]
@@ -127,10 +147,6 @@ label_rekomendasi.pack(anchor="w")
 
 
 # Daftar tugas
-daftar_tugas = tk.Frame(window)
-daftar_tugas.pack(pady=10, fill="x")
-
-
 daftar_tugas = tk.Frame(window)
 daftar_tugas.pack(pady=10, fill="x")
 
