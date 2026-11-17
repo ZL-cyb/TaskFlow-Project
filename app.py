@@ -706,27 +706,120 @@ def rekomendasi_tugas():
 
 #Mengubah deadline tugas
 def ubah_deadline(tugas):
-    deadline_baru =simpledialog.askstring(
-        "Ubah Deadline",
-        "Masukan tanggal baru (DD-MM-YYYY):\n"
-        "Kosongkan jika ingin menghapus deadline"
+    pilihan = tk.Toplevel(window)
+    pilihan.title("Ubah Deadline")
+    pilihan.geometry("380x250")
+    pilihan.resizable(False, False)
+    pilihan.configure(bg="#F4F6FA")
+    pilihan.transient(window)
+    pilihan.grab_set()
+
+    # Judul pop-up
+    tk.Label(
+        pilihan,
+        text="Atur Deadline Tugas",
+        font=("Segoe UI", 14, "bold"),
+        bg="#F4F6FA",
+        fg="#1E293B"
+    ).pack(pady=(20, 5))
+
+    # Nama tugas
+    tk.Label(
+        pilihan,
+        text=tugas["nama"],
+        font=("Segoe UI", 10),
+        bg="#F4F6FA",
+        fg="#64748B"
+    ).pack(pady=5)
+
+    # Petunjuk tanggal
+    tk.Label(
+        pilihan,
+        text="Tanggal (DD-MM-YYYY)",
+        font=("Segoe UI", 10, "bold"),
+        bg="#F4F6FA",
+        fg="#334155"
+    ).pack(pady=(10, 5))
+
+    input_deadline = tk.Entry(
+        pilihan,
+        font=("Segoe UI", 11),
+        justify="center",
+        relief="solid",
+        bd=1
     )
-    
-    if deadline_baru is None:
-        return
-    
-    if deadline_baru.strip() == "":
-        tugas["deadline"] = "Belum ditentukan"
-    else:
-        try:
-            datetime.strptime(deadline_baru, "%d-%m-%Y")
-        except ValueError:
-            return
-        
-        tugas["deadline"] = deadline_baru
-        
-    simpan_tugas()
-    tampilkan_daftar_tugas()
+    input_deadline.pack(ipady=6, padx=40, fill="x")
+
+    deadline_lama = tugas.get("deadline", "Belum ditentukan")
+
+    if deadline_lama != "Belum ditentukan":
+        input_deadline.insert(0, deadline_lama)
+
+    label_error = tk.Label(
+        pilihan,
+        text="Kosongkan jika ingin menghapus deadline",
+        font=("Segoe UI", 9),
+        bg="#F4F6FA",
+        fg="#64748B"
+    )
+    label_error.pack(pady=5)
+
+    # Tombol simpan
+    def simpan_deadline():
+        deadline_baru = input_deadline.get().strip()
+
+        if deadline_baru == "":
+            tugas["deadline"] = "Belum ditentukan"
+        else:
+            try:
+                datetime.strptime(deadline_baru, "%d-%m-%Y")
+            except ValueError:
+                label_error.config(
+                    text="Format tanggal tidak valid!",
+                    fg="#DC2626"
+                )
+                return
+
+            tugas["deadline"] = deadline_baru
+
+        simpan_tugas()
+        tampilkan_daftar_tugas()
+        pilihan.destroy()
+
+    tombol_frame = tk.Frame(
+        pilihan,
+        bg="#F4F6FA"
+    )
+    tombol_frame.pack(pady=12)
+
+    tk.Button(
+        tombol_frame,
+        text="Batal",
+        command=pilihan.destroy,
+        font=("Segoe UI", 10),
+        bg="#E2E8F0",
+        fg="#334155",
+        relief="flat",
+        padx=18,
+        pady=7,
+        cursor="hand2"
+    ).pack(side="left", padx=5)
+
+    tk.Button(
+        tombol_frame,
+        text="Simpan",
+        command=simpan_deadline,
+        font=("Segoe UI", 10, "bold"),
+        bg="#2563EB",
+        fg="white",
+        activebackground="#1D4ED8",
+        activeforeground="white",
+        relief="flat",
+        padx=18,
+        pady=7,
+        cursor="hand2"
+    ).pack(side="left", padx=5)
+
     
 #Mengecek stat deadline
 def cek_deadline(tugas):
