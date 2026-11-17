@@ -448,22 +448,45 @@ def tampilkan_daftar_tugas():
 
         deadline = tugas.get("deadline", "Belum ditentukan")
         peringatan = cek_deadline(tugas)
+        
+        # Warna berdasarkan prioritas
+        warna_prioritas = {
+             "Tinggi": "#DC2626",
+             "Sedang": "#D97706",
+             "Rendah": "#2563EB"
+}
+
+        warna_teks = warna_prioritas.get(
+             tugas.get("prioritas", "Sedang"),
+              "#334155"
+)
+
+        # Tampilan khusus jika tugas selesai
+        if tugas.get("selesai", False):
+            warna_teks = "#94A3B8"
+            font_tugas = ("Segoe UI", 10, "overstrike")
+        else:
+         font_tugas = ("Segoe UI", 10)
 
         checkbox = tk.Checkbutton(
         baris,
         text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas", "Sedang")} - Deadline: {deadline} ({peringatan})',
         variable=status,
-        font=("Segoe UI", 10),
+        font=font_tugas,
         bg="white",
-        fg="#334155",
+        fg=warna_teks,
         activebackground="white",
-        activeforeground="#1E293B",
+        activeforeground=warna_teks,
         selectcolor="white",
         relief="flat",
         anchor="w",
         command=lambda t=tugas, s=status: ubah_status(t, s)
 )
-        checkbox.pack(side="left", fill="x", expand=True)
+        checkbox.pack(
+            side="left",
+            fill="x",
+            expand=True
+        )
 
         tombol_ubah = tk.Button(
             baris,
