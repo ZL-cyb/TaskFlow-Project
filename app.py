@@ -419,7 +419,8 @@ def tampilkan_daftar_tugas():
             text="Semua tugas sudah selesai"
         )
     
-
+    jumlah_tampil =0
+    
     for tugas in daftar_data:
         tugas.setdefault("prioritas", "Sedang")
         
@@ -431,7 +432,8 @@ def tampilkan_daftar_tugas():
         if pilihan == "Selesai" and not tugas.get("selesai", False):
             continue
         
-                # Kartu setiap tugas
+        jumlah_tampil += 1
+         # Kartu setiap tugas
         baris = tk.Frame(
             daftar_tugas,
             bg="white",
@@ -532,6 +534,26 @@ def tampilkan_daftar_tugas():
             cursor="hand2"
         )
         tombol_hapus.pack(side="right", padx=3)
+        
+    #Tampilan jika tidak ada tugas
+    if jumlah_tampil == 0:
+        if filter_status.get() == "Selesai":
+            pesan = "Belum ada tugas yang selesai."
+        elif filter_status.get() == "Belum selesai":
+            pesan = "Semua tugas sudah selesai!"
+        else:
+            pesan = "Belum ada tugas. Yuk, tambahkan tugas pertamamu!"
+            
+        label_kosong = tk.Label(
+        daftar_tugas,
+        text=pesan,
+        font=("Segoe UI", 11),
+        bg="#F4F6FA",
+        fg="#64748B",
+        pady=30        
+        )
+        label_kosong.pack(fill="x")
+        
 #Memperbarui status tugas
 def ubah_status(tugas, status):
         tugas["selesai"] = status.get()
