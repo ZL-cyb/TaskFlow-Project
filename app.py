@@ -173,7 +173,6 @@ label_belum = tk.Label(
 )
 label_belum.pack()
 
-#Progres pengerjaan tugas
 # Progress pengerjaan tugas
 progress_frame = tk.Frame(
     window,
@@ -201,7 +200,6 @@ progress_bar = ttk.Progressbar(
 )
 progress_bar.pack(fill="x", pady=8)
 
-#Filter daftar tugas 
 # Filter daftar tugas
 filter_frame = tk.Frame(
     window,
@@ -250,7 +248,7 @@ tk.Label(
     frame_rekomendasi,
     text="REKOMENDASI UNTUK KAMU",
     font=("Segoe UI", 10, "bold"),
-    bg="white",
+    bg="#E8F3FF",
     fg="#2563EB"
 ).pack(anchor="w", pady=(0, 8))
 
@@ -259,7 +257,7 @@ label_rekomendasi = tk.Label(
     frame_rekomendasi,
     text="Rekomendasi Tugas: Belum ada",
     font=("Segoe UI", 11),
-    bg="white",
+    bg="#E8F3FF",
     fg="#334155",
     justify="left",
     wraplength=900
@@ -374,9 +372,9 @@ def perbarui_statistik():
     
     belum = total - selesai
     
-    label_total.config(text=f"Total: {total}")
-    label_selesai.config(text=f"Selesai: {selesai}")
-    label_belum.config(text=f"Belum selesai: {belum}")
+    label_total.config(text=str(total))
+    label_selesai.config(text=str(selesai))
+    label_belum.config(text=str(belum))
     
     #menghitung presentase tugas selesai
     if total > 0:
@@ -388,6 +386,18 @@ def perbarui_statistik():
         
     label_progress.config(
             text=f"Progress: {presentase:.0f}%"
+    )
+    
+# Efek hover pada tombol
+def pasang_hover(tombol, warna_normal, warna_hover):
+    tombol.bind(
+        "<Enter>",
+        lambda event: tombol.config(bg=warna_hover)
+    )
+
+    tombol.bind(
+        "<Leave>",
+        lambda event: tombol.config(bg=warna_normal)
     )
 
 #Menampilkan daftar tugas
@@ -495,6 +505,7 @@ def tampilkan_daftar_tugas():
             cursor="hand2"
         )
         tombol_ubah.pack(side="right", padx=3)
+        pasang_hover(tombol_ubah, "#2E8F0", "#CBD5E1")
 
         tombol_deadline = tk.Button(
             baris,
@@ -510,6 +521,7 @@ def tampilkan_daftar_tugas():
             cursor="hand2"
         )
         tombol_deadline.pack(side="right", padx=3)
+        pasang_hover(tombol_deadline, "#DBEAFE", "#BFDBFE")
 
         tombol_hapus = tk.Button(
             baris,
@@ -525,6 +537,7 @@ def tampilkan_daftar_tugas():
             cursor="hand2"
         )
         tombol_hapus.pack(side="right", padx=3)
+        pasang_hover(tombol_hapus, "#FEE2E2", "#FECACA")
         
     #Tampilan jika tidak ada tugas
     if jumlah_tampil == 0:
@@ -969,6 +982,7 @@ tombol = tk.Button(
 )
 
 tombol.pack()
+pasang_hover(tombol, "#2563EB", "#1D4ED8")
 
 muat_tugas()
 tampilkan_daftar_tugas()
