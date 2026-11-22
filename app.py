@@ -292,15 +292,12 @@ judul_daftar.pack(
 )
 
 # Area daftar tugas yang bisa di-scroll
-area_tugas = tk.Frame(
-    window,
-    bg="#F4F6FA"
-)
+area_tugas = tk.Frame(window, bg="#F4F6FA")
 area_tugas.pack(
     fill="both",
     expand=True,
     padx=25,
-    pady=10
+    pady=(10, 5)
 )
 
 canvas_tugas = tk.Canvas(
@@ -363,10 +360,8 @@ def scroll_mouse(event):
         "units"
     )
 
-canvas_tugas.bind_all(
-    "<MouseWheel>",
-    scroll_mouse
-)
+canvas_tugas.bind("<Enter>", lambda event: canvas_tugas.bind_all("<MouseWheel>", scroll_mouse))
+canvas_tugas.bind("<Leave>", lambda event: canvas_tugas.unbind_all("<MouseWheel>"))
 
 #Memperbarui statistik tugas
 def perbarui_statistik():
@@ -440,11 +435,7 @@ def tampilkan_daftar_tugas():
             padx=12,
             pady=10
         )
-        baris.pack(
-            fill="x",
-            padx=5,
-            pady=5
-        )
+        baris.pack( fill="x", pady=5, padx=5)
 
         status = tk.BooleanVar(value=tugas["selesai"])
 
@@ -562,88 +553,146 @@ def ubah_status(tugas, status):
         
 #Menambah tugas baru
 def tambah_tugas():
-    nama = simpledialog.askstring(
-        "Tambah Tugas",
-        "Masukan nama tugas"
+    popup = tk.Toplevel(window)
+    popup.title("Tambah Tugas")
+    popup.geometry("400x400")
+    popup.resizable(False, False)
+    popup.configure(bg="#F4F6FA")
+    popup.transient(window)
+    popup.grab_set()
+
+    tk.Label(
+        popup,
+        text="Tambah Tugas Baru",
+        font=("Segoe UI", 17, "bold"),
+        bg="#F4F6FA",
+        fg="#1E293B"
+    ).pack(pady=(20, 5))
+
+    tk.Label(
+        popup,
+        text="Isi detail tugas yang ingin kamu kerjakan",
+        font=("Segoe UI", 9),
+        bg="#F4F6FA",
+        fg="#64748B"
+    ).pack(pady=(0, 20))
+
+    # Nama tugas
+    tk.Label(
+        popup,
+        text="Nama Tugas",
+        font=("Segoe UI", 10, "bold"),
+        bg="#F4F6FA"
+    ).pack(anchor="w", padx=35)
+
+    entry_nama = tk.Entry(
+        popup,
+        font=("Segoe UI", 11),
+        relief="flat"
     )
-    
-    if nama and nama.strip():
+    entry_nama.pack(fill="x", padx=35, pady=(5, 15), ipady=7)
 
-        # Meminta tanggal deadline
-        while True:
-            deadline = simpledialog.askstring(
-                "Deadline Tugas",
-                "Masukkan tanggal (DD-MM-YYYY):\nContoh: 12-12-2026"
-            )
+    # Deadline
+    tk.Label(
+        popup,
+        text="Deadline (DD-MM-YYYY)",
+        font=("Segoe UI", 10, "bold"),
+        bg="#F4F6FA"
+    ).pack(anchor="w", padx=35)
 
-            if deadline is None:
-                return
+    entry_deadline = tk.Entry(
+        popup,
+        font=("Segoe UI", 11),
+        relief="flat"
+    )
+    entry_deadline.pack(fill="x", padx=35, pady=(5, 15), ipady=7)
 
-            if deadline.strip() == "":
-                deadline = "Belum ditentukan"
-                break
+    # Prioritas
+    tk.Label(
+        popup,
+        text="Prioritas",
+        font=("Segoe UI", 10, "bold"),
+        bg="#F4F6FA"
+    ).pack(anchor="w", padx=35)
 
+    pilihan_prioritas = ttk.Combobox(
+        popup,
+        values=["Tinggi", "Sedang", "Rendah"],
+        state="readonly",
+        font=("Segoe UI", 10)
+    )
+    pilihan_prioritas.set("Sedang")
+    pilihan_prioritas.pack(fill="x", padx=35, pady=(5, 20))
+
+    def simpan():
+        nama = entry_nama.get().strip()
+        deadline = entry_deadline.get().strip()
+        prioritas = pilihan_prioritas.get()
+
+        if not nama:
+            tk.Label(
+                popup,
+                text="Nama tugas tidak boleh kosong!",
+                fg="#DC2626",
+                bg="#F4F6FA"
+            ).pack()
+            return
+
+        if deadline:
             try:
                 datetime.strptime(deadline, "%d-%m-%Y")
-                break
             except ValueError:
-                continue
+                tk.Label(
+                    popup,
+                    text="Format deadline tidak valid!",
+                    fg="#DC2626",
+                    bg="#F4F6FA"
+                ).pack()
+                return
+        else:
+            deadline = "Belum ditentukan"
 
-        # Membuat pop-up pilihan prioritas
-        pilihan = tk.Toplevel(window)
-        pilihan.title("Pilih Prioritas")
-        pilihan.geometry("350x200")
-        pilihan.resizable(False, False)
-        pilihan.configure(bg="#F4F6FA")
-        pilihan.transient(window)
-        pilihan.grab_set()
+        daftar_data.append({
+            "nama": nama,
+            "selesai": False,
+            "prioritas": prioritas,
+            "deadline": deadline
+        })
 
-        tk.Label(
-            pilihan,
-             text="Tentukan prioritas tugas",
-             font=("Segoe UI", 12, "bold"),
-             bg="#F4F6FA",
-             fg="#1E293B"
-        ).pack(pady=(20, 12))
+        simpan_tugas()
+        tampilkan_daftar_tugas()
+        perbarui_statistik()
 
-        prioritas = tk.StringVar(value="Sedang")
+        popup.destroy()
 
-        ttk.Combobox(
-            pilihan,
-            textvariable=prioritas,
-            values=["Tinggi", "Sedang", "Rendah"],
-            state="readonly",
-            width=25
-        ).pack(pady=5)
+    tombol_frame = tk.Frame(popup, bg="#F4F6FA")
+    tombol_frame.pack(pady=5)
 
-        # Menyimpan tugas
-        def simpan_prioritas():
-            daftar_data.append({
-                "nama": nama.strip(),
-                "selesai": False,
-                "prioritas": prioritas.get(),
-                "deadline": deadline
-            })
+    tk.Button(
+        tombol_frame,
+        text="Batal",
+        command=popup.destroy,
+        bg="#E2E8F0",
+        fg="#334155",
+        relief="flat",
+        font=("Segoe UI", 10),
+        padx=20,
+        pady=8
+    ).pack(side="left", padx=5)
 
-            urutkan_tugas()
-            simpan_tugas()
-            tampilkan_daftar_tugas()
-            pilihan.destroy()
+    tk.Button(
+        tombol_frame,
+        text="Simpan Tugas",
+        command=simpan,
+        bg="#2563EB",
+        fg="white",
+        relief="flat",
+        font=("Segoe UI", 10, "bold"),
+        padx=20,
+        pady=8
+    ).pack(side="left", padx=5)
 
-        tk.Button(
-            pilihan,
-            text="Simpan",
-            command=simpan_prioritas,
-            font=("Segoe UI", 10, "bold"),
-            bg="#2563EB",
-            fg="white",
-            activebackground="#1D4ED8",
-            activeforeground="white",
-            relief="flat",
-            padx=18,
-            pady=7,
-            cursor="hand2"
-        ).pack(pady=15)
+    entry_nama.focus_set()
     
 #Mengubah prioritas tugas yg sudah ada
 def ubah_prioritas(tugas):
