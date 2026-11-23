@@ -421,112 +421,146 @@ def pasang_hover(tombol, warna_normal, warna_hover):
     )
 
 #Menampilkan daftar tugas
+
 def tampilkan_daftar_tugas():
     for widget in daftar_tugas.winfo_children():
         widget.destroy()
-        
+
     urutkan_tugas()
     perbarui_statistik()
-    
+
     tugas_rekomendasi = rekomendasi_tugas()
-    
+
     if tugas_rekomendasi:
         label_rekomendasi.config(
             text=(
-                   f"Rekomendasi Tugas: {tugas_rekomendasi['nama']}\n"
-                   f"Prioritas: {tugas_rekomendasi.get('prioritas', 'Sedang')}\n"
-                   f"Deadline: {tugas_rekomendasi.get('deadline', 'Belum ditentukan')}\n"
-                   f"Sebaiknya kerjakan tugas ini terlebih dahulu!"
+                f"Rekomendasi Tugas: {tugas_rekomendasi['nama']}\n"
+                f"Prioritas: {tugas_rekomendasi.get('prioritas', 'Sedang')}\n"
+                f"Deadline: {tugas_rekomendasi.get('deadline', 'Belum ditentukan')}\n"
+                f"Sebaiknya kerjakan tugas ini terlebih dahulu!"
             )
         )
     else:
         label_rekomendasi.config(
             text="Semua tugas sudah selesai"
         )
-    
-    jumlah_tampil =0
-    
+
+    jumlah_tampil = 0
+
     for tugas in daftar_data:
         tugas.setdefault("prioritas", "Sedang")
-        
+
         pilihan = filter_status.get()
-        
+
         if pilihan == "Belum selesai" and tugas.get("selesai", False):
             continue
-        
+
         if pilihan == "Selesai" and not tugas.get("selesai", False):
             continue
-        
+
         jumlah_tampil += 1
-         # Kartu setiap tugas
+
+        # Kartu tugas
         baris = tk.Frame(
             daftar_tugas,
             bg="white",
             padx=12,
-            pady=10
+            pady=12,
+            bd=1,
+            relief="solid",
+            highlightbackground="#E2E8F0"
         )
-        baris.pack( fill="x", pady=5, padx=5)
+        baris.pack(fill="x", pady=5, padx=5)
 
         status = tk.BooleanVar(value=tugas["selesai"])
 
         deadline = tugas.get("deadline", "Belum ditentukan")
         peringatan = cek_deadline(tugas)
-        
-        # Warna berdasarkan prioritas
-        warna_prioritas = {
-             "Tinggi": "#DC2626",
-             "Sedang": "#D97706",
-             "Rendah": "#2563EB"
-}
 
-        warna_teks = warna_prioritas.get(
-             tugas.get("prioritas", "Sedang"),
-              "#334155"
-)
+        prioritas = tugas.get("prioritas", "Sedang")
 
-        # Tampilan khusus jika tugas selesai
+        # Warna badge prioritas
+        warna_badge = {
+            "Tinggi": ("#FEE2E2", "#DC2626"),
+            "Sedang": ("#FEF3C7", "#D97706"),
+            "Rendah": ("#DBEAFE", "#2563EB")
+        }
+
+        bg_badge, fg_badge = warna_badge.get(
+            prioritas,
+            ("#E2E8F0", "#334155")
+        )
+
+        # Tampilan tugas selesai
         if tugas.get("selesai", False):
             warna_teks = "#94A3B8"
             font_tugas = ("Segoe UI", 10, "overstrike")
         else:
-         font_tugas = ("Segoe UI", 10)
+            warna_teks = "#1E293B"
+            font_tugas = ("Segoe UI", 10, "bold")
 
+        # Checkbox dan nama tugas
         checkbox = tk.Checkbutton(
-        baris,
-        text=f'{tugas["nama"]} - Prioritas: {tugas.get("prioritas", "Sedang")} - Deadline: {deadline} ({peringatan})',
-        variable=status,
-        font=font_tugas,
-        bg="white",
-        fg=warna_teks,
-        activebackground="white",
-        activeforeground=warna_teks,
-        selectcolor="white",
-        relief="flat",
-        anchor="w",
-        command=lambda t=tugas, s=status: ubah_status(t, s)
-)
+            baris,
+            text=tugas["nama"],
+            variable=status,
+            font=font_tugas,
+            bg="white",
+            fg=warna_teks,
+            activebackground="white",
+            activeforeground=warna_teks,
+            selectcolor="white",
+            relief="flat",
+            anchor="w",
+            command=lambda t=tugas, s=status: ubah_status(t, s)
+        )
         checkbox.pack(
             side="left",
             fill="x",
             expand=True
         )
 
-        tombol_ubah = tk.Button(
+        # Badge prioritas
+        badge_prioritas = tk.Label(
             baris,
-            text="Prioritas",
-            command=lambda t=tugas: ubah_prioritas(t),
+            text=prioritas.upper(),
+            font=("Segoe UI", 8, "bold"),
+            bg=bg_badge,
+            fg=fg_badge,
+            padx=9,
+            pady=5
+        )
+        badge_prioritas.pack(side="left", padx=8)
+
+        # Informasi deadline
+        label_deadline = tk.Label(
+            baris,
+            text=f"{deadline} | {peringatan}",
+            font=("Segoe UI", 8),
+            bg="white",
+            fg="#64748B",
+            padx=5
+        )
+        label_deadline.pack(side="left", padx=5)
+
+        # Tombol hapus
+        tombol_hapus = tk.Button(
+            baris,
+            text="Hapus",
+            command=lambda t=tugas: hapus_tugas(t),
             font=("Segoe UI", 9),
-            bg="#E2E8F0",
-            fg="#334155",
-            activebackground="#CBD5E1",
+            bg="#FEE2E2",
+            fg="#DC2626",
+            activebackground="#FECACA",
             relief="flat",
             padx=10,
             pady=5,
             cursor="hand2"
         )
-        tombol_ubah.pack(side="right", padx=3)
-        pasang_hover(tombol_ubah, "#2E8F0", "#CBD5E1")
+        tombol_hapus.pack(side="right", padx=3)
+        pasang_hover(tombol_hapus, "#FEE2E2", "#FECACA")
 
+        # Tombol deadline
         tombol_deadline = tk.Button(
             baris,
             text="Deadline",
@@ -543,23 +577,24 @@ def tampilkan_daftar_tugas():
         tombol_deadline.pack(side="right", padx=3)
         pasang_hover(tombol_deadline, "#DBEAFE", "#BFDBFE")
 
-        tombol_hapus = tk.Button(
+        # Tombol prioritas
+        tombol_ubah = tk.Button(
             baris,
-            text="Hapus",
-            command=lambda t=tugas: hapus_tugas(t),
+            text="Prioritas",
+            command=lambda t=tugas: ubah_prioritas(t),
             font=("Segoe UI", 9),
-            bg="#FEE2E2",
-            fg="#DC2626",
-            activebackground="#FECACA",
+            bg="#E2E8F0",
+            fg="#334155",
+            activebackground="#CBD5E1",
             relief="flat",
             padx=10,
             pady=5,
             cursor="hand2"
         )
-        tombol_hapus.pack(side="right", padx=3)
-        pasang_hover(tombol_hapus, "#FEE2E2", "#FECACA")
-        
-    #Tampilan jika tidak ada tugas
+        tombol_ubah.pack(side="right", padx=3)
+        pasang_hover(tombol_ubah, "#E2E8F0", "#CBD5E1")
+
+    # Tampilan jika tidak ada tugas
     if jumlah_tampil == 0:
         if filter_status.get() == "Selesai":
             pesan = "Belum ada tugas yang selesai."
@@ -567,16 +602,17 @@ def tampilkan_daftar_tugas():
             pesan = "Semua tugas sudah selesai!"
         else:
             pesan = "Belum ada tugas. Yuk, tambahkan tugas pertamamu!"
-            
+
         label_kosong = tk.Label(
-        daftar_tugas,
-        text=pesan,
-        font=("Segoe UI", 11),
-        bg="#F4F6FA",
-        fg="#64748B",
-        pady=30        
+            daftar_tugas,
+            text=pesan,
+            font=("Segoe UI", 11),
+            bg="#F4F6FA",
+            fg="#64748B",
+            pady=30
         )
         label_kosong.pack(fill="x")
+
         
 #Memperbarui status tugas
 def ubah_status(tugas, status):
