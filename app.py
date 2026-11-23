@@ -3,6 +3,7 @@ from tkinter import simpledialog, ttk
 import json
 from pathlib import Path
 from datetime import datetime
+import sys
 
 window = tk.Tk()
 window.title("TaskFlow - Task Management")
@@ -27,9 +28,12 @@ style.configure(
     thickness=10
 )
 
+if getattr(sys, "frozen", False):
+    folder_aplikasi = Path(sys.executable).parent
+else:
+    folder_aplikasi = Path(__file__).parent
 
-file_tugas = Path(__file__).with_name("task.json")
-daftar_data =[]
+file_tugas = folder_aplikasi / "task.json"
 
 #Memuat tugas yg sudah tersimpan
 def muat_tugas():
@@ -72,7 +76,7 @@ header_frame.pack(
 judul = tk.Label(
     header_frame,
     text="TaskFlow",
-    font=("Segoe UI", 24, "bold"),
+    font=("Segoe UI", 28, "bold"),
     bg="#F4F6FA",
     fg="#1E293B"
 )
@@ -80,7 +84,7 @@ judul.pack(anchor="w")
 
 subjudul = tk.Label(
     header_frame,
-    text="Kelola tugasmu, atur prioritas, dan capai targetmu.",
+    text="Atur tugas, tentukan prioritas dan capai targetmu.",
     font=("Segoe UI", 10),
     bg="#F4F6FA",
     fg="#64748B"
@@ -99,6 +103,9 @@ statistik_frame.pack(fill="x", padx=25, pady=15)
 card_total = tk.Frame(
     statistik_frame,
     bg="white",
+    bd=1,
+    relief="solid",
+    highlightbackground="#E2E8F0",
     padx=25,
     pady=18
 )
@@ -125,6 +132,9 @@ label_total.pack()
 card_selesai = tk.Frame(
     statistik_frame,
     bg="white",
+    bd=1,
+    relief="solid",
+    highlightbackground="#E2E8F0",
     padx=25,
     pady=18
 )
@@ -151,6 +161,9 @@ label_selesai.pack()
 card_belum = tk.Frame(
     statistik_frame,
     bg="white",
+    bd=1,
+    relief="solid",
+    highlightbackground="#E2E8F0",
     padx=25,
     pady=18
 )
@@ -176,17 +189,24 @@ label_belum.pack()
 # Progress pengerjaan tugas
 progress_frame = tk.Frame(
     window,
-    bg="#F4F6FA",
-    padx=25,
+    bg="white",
+    padx=20,
+    pady=15,
+    bd=1,
+    relief="solid",
+    highlightbackground="#E2E8F0"
+)
+progress_frame.pack(
+    fill="x",
+    padx=33,
     pady=10
 )
-progress_frame.pack(fill="x")
 
 label_progress = tk.Label(
     progress_frame,
     text="Progress: 0%",
     font=("Segoe UI", 10, "bold"),
-    bg="#F4F6FA",
+    bg="white",
     fg="#334155"
 )
 label_progress.pack(anchor="w")
