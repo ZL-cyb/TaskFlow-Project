@@ -707,83 +707,124 @@ def tambah_tugas():
 
     entry_nama.focus_set()
     
-#Mengubah prioritas tugas yg sudah ada
+# Mengubah prioritas tugas
 def ubah_prioritas(tugas):
     pilihan = tk.Toplevel(window)
     pilihan.title("Ubah Prioritas")
-    pilihan.geometry("350x200")
+    pilihan.geometry("400x270")
     pilihan.resizable(False, False)
     pilihan.configure(bg="#F4F6FA")
     pilihan.transient(window)
     pilihan.grab_set()
-    
-    tk.Label(
-    pilihan,
-    text=f'Ubah prioritas tugas',
-    font=("Segoe UI", 12, "bold"),
-    bg="#F4F6FA",
-    fg="#1E293B"
-).pack(pady=(20, 5))
 
+    # Judul
     tk.Label(
-    pilihan,
-    text=tugas["nama"],
-    font=("Segoe UI", 10),
-    bg="#F4F6FA",
-    fg="#64748B"
-).pack(pady=5)
-    
+        pilihan,
+        text="Ubah Prioritas Tugas",
+        font=("Segoe UI", 17, "bold"),
+        bg="#F4F6FA",
+        fg="#1E293B"
+    ).pack(pady=(25, 5))
+
+    # Nama tugas
+    tk.Label(
+        pilihan,
+        text=tugas["nama"],
+        font=("Segoe UI", 10),
+        bg="#F4F6FA",
+        fg="#64748B"
+    ).pack(pady=(0, 20))
+
+    # Label pilihan
+    tk.Label(
+        pilihan,
+        text="Pilih prioritas baru:",
+        font=("Segoe UI", 10, "bold"),
+        bg="#F4F6FA",
+        fg="#334155"
+    ).pack(anchor="w", padx=40)
+
     prioritas = tk.StringVar(
         value=tugas.get("prioritas", "Sedang")
     )
-    
-    ttk.Combobox(
+
+    pilihan_prioritas = ttk.Combobox(
         pilihan,
         textvariable=prioritas,
         values=["Tinggi", "Sedang", "Rendah"],
         state="readonly",
-        width=25
-    ).pack(pady=5)
-    
-    def simpan_perubahan():
-            tugas["prioritas"] = prioritas.get()
-    
-            urutkan_tugas()
-            simpan_tugas()
-            tampilkan_daftar_tugas()
-            pilihan.destroy()
-            
-    tk.Button(
-            pilihan,
-            text="Simpan Perubahan",
-            command=simpan_perubahan,
-            font=("Segoe UI", 10, "bold"),
-            bg="#2563EB",
-            fg="white",
-            activebackground="#1D4ED8",
-            activeforeground="white",
-            relief="flat",
-            padx=18,
-            pady=7,
-            cursor="hand2"
-        ).pack(pady=12)
+        font=("Segoe UI", 10)
+    )
+    pilihan_prioritas.pack(
+        fill="x",
+        padx=40,
+        pady=(5, 20)
+    )
 
-#rekomendasi tugas 
+    # Menyimpan perubahan
+    def simpan_perubahan():
+        tugas["prioritas"] = prioritas.get()
+
+        urutkan_tugas()
+        simpan_tugas()
+        tampilkan_daftar_tugas()
+
+        pilihan.destroy()
+
+    # Tombol
+    tombol_frame = tk.Frame(
+        pilihan,
+        bg="#F4F6FA"
+    )
+    tombol_frame.pack()
+
+    tombol_batal = tk.Button(
+        tombol_frame,
+        text="Batal",
+        command=pilihan.destroy,
+        font=("Segoe UI", 10),
+        bg="#E2E8F0",
+        fg="#334155",
+        relief="flat",
+        padx=20,
+        pady=8,
+        cursor="hand2"
+    )
+    tombol_batal.pack(side="left", padx=5)
+
+    tombol_simpan = tk.Button(
+        tombol_frame,
+        text="Simpan Perubahan",
+        command=simpan_perubahan,
+        font=("Segoe UI", 10, "bold"),
+        bg="#2563EB",
+        fg="white",
+        relief="flat",
+        padx=20,
+        pady=8,
+        cursor="hand2"
+    )
+    tombol_simpan.pack(side="left", padx=5)
+
+    pasang_hover(tombol_batal, "#E2E8F0", "#CBD5E1")
+    pasang_hover(tombol_simpan, "#2563EB", "#1D4ED8")
+    
+    # Rekomendasi tugas
 def rekomendasi_tugas():
     tugas_belum_selesai = [
         tugas for tugas in daftar_data
         if not tugas.get("selesai", False)
     ]
-    
+
     if not tugas_belum_selesai:
         return None
-    
+
     urutan_prioritas = {
         "Tinggi": 1,
         "Sedang": 2,
         "Rendah": 3
     }
-    
+
     def nilai_tugas(tugas):
         deadline = tugas.get("deadline", "Belum ditentukan")
 
@@ -793,24 +834,26 @@ def rekomendasi_tugas():
             tanggal = datetime.strptime(
                 deadline, "%d-%m-%Y"
             ).date()
-            
+
         hari_ini = datetime.now().date()
-        
+
         if tanggal < hari_ini:
             status_deadline = 0
         elif tanggal == hari_ini:
             status_deadline = 1
         else:
             status_deadline = 2
-            
+
         return (
             status_deadline,
             tanggal,
-            urutan_prioritas.get(tugas.get("prioritas", "Sedang"), 2)
+            urutan_prioritas.get(
+                tugas.get("prioritas", "Sedang"), 2
+            )
         )
-        
-    return min(tugas_belum_selesai, key=nilai_tugas)
 
+    return min(tugas_belum_selesai, key=nilai_tugas)
+    
 #Mengubah deadline tugas
 def ubah_deadline(tugas):
     pilihan = tk.Toplevel(window)
